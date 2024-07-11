@@ -43,4 +43,4 @@ start_process jupyter lab ${NOTEBOOK_PROGRAM_ARGS} \
     --ServerApp.ip=0.0.0.0 \
     --ServerApp.allow_origin="*" \
     --ServerApp.open_browser=False  \
-    --ServerApp.token=''
+    --ServerApp.token='' --LabApp.default_url='/lab/workspaces/auto-s/tree/start_menu.ipynb'

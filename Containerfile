@@ -69,6 +69,7 @@ COPY --chown=1001:0 start-notebook.sh ./
 # copy demo slide show
 COPY --chown=1001:0 Slide_Show.ipynb /opt/app-root/src
 COPY --chown=1001:0 Start.ipynb /opt/app-root/src
+COPY --chown=1001:0 start_menu.ipynb /opt/app-root/src
 
 # Streamlit extension installation
 COPY --chown=1001:0 streamlit-launcher.sh ./
@@ -81,6 +82,7 @@ COPY --chown=1001:0 setup-elyra.sh ./utils/
 # (all commands are chained to minimize layer size)
 RUN echo "Installing softwares and packages" && \
     # Install Python packages \
+    npm install @ibm/plex && \
     pip install --no-cache-dir -r requirements-jupyter.txt && \
     pip install --no-cache-dir ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     rm -f ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
@@ -122,7 +124,10 @@ RUN echo "Installing softwares and packages" && \
 
 # Copy Elyra runtime-images definitions and set the version
 COPY --chown=1001:0 runtime-images/ /opt/app-root/share/jupyter/metadata/runtime-images/
-RUN sed -i "s/RELEASE/2023c/" /opt/app-root/share/jupyter/metadata/runtime-images/*.json 
+COPY --chown=1001:0 custom.css $/opt/app-root/share/jupyter/custom/custom.css 
+COPY --chown=1001:0 custom.css $/opt/app-root/share/jupyter/custom.css
+
+RUN sed -i "s/RELEASE/2023c/" /opt/app-root/share/jupyter/metadata/runtime-images/*.json  
 
 # Jupyter Server config to allow hidden files/folders in explorer. Ref: https://jupyterlab.readthedocs.io/en/latest/user/files.html#displaying-hidden-files
 # Jupyter Lab config to hide disabled exporters (WebPDF, Qtpdf, Qtpng)
