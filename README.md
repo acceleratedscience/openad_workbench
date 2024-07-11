@@ -51,6 +51,16 @@ The following provides the the template for building a Jupyter Workbench Runtime
 
 <br>
 
+To install podman see [install instructions](https://podman.io/docs/installation)
+
+First all make sure you have at least 4GB of memory available to podman.
+e.g. <br>
+```
+podman stop
+podman machine set --cpus 4 --memory 4096
+podman start
+```
+
 To build your image and deploy on podman run<br>
 `podman build -t openad_workbench .`<br>
 
@@ -64,4 +74,6 @@ To stop your workbench:<br>
  `podman stop my_workbench`
 
 To delete your workbench container you will need to stop it then run the following:<br>
-`podman rm my_workbench `
+`podman rm my_workbench `<br>
+
+Once the Pod is Started use the url in your browser `127.0.0.1:8888` to enter your jupyter lab

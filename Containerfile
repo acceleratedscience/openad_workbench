@@ -68,6 +68,7 @@ COPY --chown=1001:0 utils utils/
 COPY --chown=1001:0 start-notebook.sh ./
 # copy demo slide show
 COPY --chown=1001:0 Slide_Show.ipynb /opt/app-root/src
+COPY --chown=1001:0 Start.ipynb /opt/app-root/src
 
 # Streamlit extension installation
 COPY --chown=1001:0 streamlit-launcher.sh ./
@@ -84,7 +85,8 @@ RUN echo "Installing softwares and packages" && \
     pip install --no-cache-dir ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     rm -f ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     pip install "jupyterlab_rise<0.40.0" && \
-    pip install --no-cache-dir openad && \
+    #pip install --no-cache-dir openad && \
+    pip install --no-cache-dir -U git+https://github.com/acceleratedscience/open-ad-toolkit@skypilot_upgrade && \
     ipython profile create && \
     init_magic && \
     init_examples && \
