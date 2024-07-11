@@ -65,7 +65,7 @@ To build your image and deploy on podman run<br>
 `podman build -t openad_workbench .`<br>
 
 To run your workbench<br>
-`podman run  -d -p 8888:8888  --name my_workbench openad_workbench`
+`podman run -d -p 8888:8888 -p 5005-5099:5005-5099  --name my_workbench openad_workbench`
 
 To stop your workbench:<br>
  `podman stop my_workbench`
