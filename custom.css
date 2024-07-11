@@ -1,0 +1,39 @@
+.text_cell, p { 
+    font-size: 12pt; 
+    font-family: "IBM Plex Sans";
+}
+
+ol, ul {
+   font-family: "IBM Plex Sans";
+   font-size: 12pt;
+}
+
+.CodeMirror, pre {
+    font-family: "IBM Plex Mono";
+    font-size: 11pt;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "IBM Plex Sans";
+    color: #466bb0; 
+}
+
+.container { 
+  width:98% !important; 
+}
+
+img[alt$=">"] {
+  float: right;
+}
+
+img[alt$="<"] {
+  float: left;
+}
+
+img[alt$="><"] {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: auto;
+  float: none!important;
+}
