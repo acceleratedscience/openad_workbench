@@ -28,7 +28,8 @@ RUN echo "Installing softwares and packages" && \
     pip install --no-cache-dir -r requirements.txt && \
     # Fix permissions to support pip in Openshift environments \
     chmod -R g+w /opt/app-root/lib/python3.11/site-packages && \
-    fix-permissions /opt/app-root -P
+    fix-permissions /opt/app-root -P  
+   
 
 WORKDIR /opt/app-root/src/
 
@@ -50,6 +51,9 @@ RUN yum install -y $(cat os-ide/os-packages.txt) && \
     rm -rf /var/cache/dnf && \
     find /var/log -type f -name "*.log" -exec rm -f {} \;
 
+
+
+
 ###########################
 
 ##############################
@@ -66,6 +70,7 @@ COPY --chown=1001:0 requirements-jupyter.txt ./
 # Copy notebook launcher and utils
 COPY --chown=1001:0 utils utils/
 COPY --chown=1001:0 start-notebook.sh ./
+COPY --chown=1001:0 process_creds.py ./
 # copy demo slide show
 COPY --chown=1001:0 Slide_Show.ipynb /opt/app-root/src
 COPY --chown=1001:0 Start.ipynb /opt/app-root/src
@@ -80,6 +85,7 @@ COPY --chown=1001:0 setup-elyra.sh ./utils/
 
 # Install packages and cleanup
 # (all commands are chained to minimize layer size)
+
 RUN echo "Installing softwares and packages" && \
     # Install Python packages \
     npm install @ibm/plex && \
@@ -87,11 +93,15 @@ RUN echo "Installing softwares and packages" && \
     pip install --no-cache-dir ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     rm -f ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     pip install "jupyterlab_rise<0.40.0" && \
-    #pip install --no-cache-dir openad && \
     pip install --no-cache-dir -U git+https://github.com/acceleratedscience/open-ad-toolkit@skypilot_upgrade && \
     ipython profile create && \
     init_magic && \
     init_examples && \
+    #jupyter lab clean && 
+    #jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
+    jupyter trust ~/openad_notebooks/*.ipynb && \
+    jupyter trust ~/*.ipynb  && \
+    #pip install --no-cache-dir openad && \
     # setup path for runtime configuration \
     mkdir /opt/app-root/runtimes && \
     # switch to Data Science Pipeline \
@@ -133,9 +143,13 @@ RUN sed -i "s/RELEASE/2023c/" /opt/app-root/share/jupyter/metadata/runtime-image
 # Jupyter Lab config to hide disabled exporters (WebPDF, Qtpdf, Qtpng)
 COPY --chown=1001:0 etc/ /opt/app-root/etc/jupyter/
 
+
+
 WORKDIR /opt/app-root/src
 
 RUN openad ?
+
+
 
 ENTRYPOINT ["start-notebook.sh"]
 

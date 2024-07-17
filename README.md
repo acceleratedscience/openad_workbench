@@ -68,7 +68,7 @@ To build your image and deploy on podman/docker run<br>
 `podman/docker build -t openad_workbench https://github.com/acceleratedscience/openad_workbench.git#main`<br>
 
 To run your workbench<br>
-`podman/docker run -d -p 8888:8888 -p 5005-5099:5005-5099  --name my_workbench openad_workbench`
+`podman/docker run -d -p 8888:8888 -p 8024-8200:8024-8200  --name my_workbench openad_workbench`
 
 To stop your workbench:<br>
  `podman/docker stop my_workbench`
@@ -80,3 +80,130 @@ To delete your workbench container you will need to stop it then run the followi
 `podman/docker rm my_workbench `<br>
 
 Once the Pod is Started use the url in your browser `127.0.0.1:8888` to enter your jupyter lab
+
+
+### Using your exiting Openad Workspaces and credentials
+
+The following instruction provides an alternative to allow you to use your desktops existing workspaces as well as use exisint RXN, Deep Search and LLM credentials.
+`podman/docker run -d -v $HOME/.openad:/opt/app-root/src/.openad:Z    -p 8888:8888 -p 8024-8200:8024-8200 --name my_workbench openad_workbench`
+
+If you wish to create secrets to pre-load models and other credentials create 2 json files
+
+First called `openad_creds.json`
+
+```
+{
+    "bam": {
+        "auth": {
+            "api_key": "<api_key>"
+        }
+    },
+    "rxn": {
+        "auth": {
+            "api_key": "<api_key>"
+        }
+    },
+    "deepsearch": {
+        "auth": {
+            "username": "jon.doe@email",
+            "api_key": "<api_key>"
+        }
+    }
+}
+```
+
+The seconds called `opend_models.json` like the following example "
+
+```
+"auth_groups": {
+        "default": "<API_key/Bearer token>"
+    },
+    "services": {
+        "prop": {
+            "host": "https://<url>:8080/proxy",
+            "inference-service": "properties",
+            "auth_group": "default"
+        },
+        "gen": {
+            "host": "https://<url>:8080/proxy",
+            "inference-service": "generation",
+            "auth_group": "default"
+        },
+        "moler": {
+            "host":"https://<url>:8080/proxy",
+            "inference-service": "moler",
+            "auth_group": "default"
+        },
+        "molf": {
+            "host": "https://<url>>:8080/proxy",
+            "inference-service": "molformer",
+            "auth_group": "default"
+        }
+    }
+ }
+```
+
+Then run `podman secret create openad_creds openad_creds.json ` <br>
+and <br>
+`podman secret create openad_models openad_models.json ` <br>
+
+Then run the following to run the container and access you notebooks
+`podman run -d --secret openad_creds --secret openad_models -p 8888:8888  -p 8024-8200:8024-8200   --name my_workbench openad_workbench`
+
+
+
+### Registration
+
+Before you can interact with the toolkits, you'll need to register with each individual toolkit.
+
+<details>
+<summary>Register with DS4SD (Deep Search)</summary>
+<div markdown="block">
+
+1. First, you'll need to generate an API key on the Deep Search website.
+
+    - Visit the Deep Search website and create an account:<br>
+      [deepsearch-experience.res.ibm.com](https://deepsearch-experience.res.ibm.com)<br>
+    - Once logged in, click the Toolkit/API icon in the top right hand corner, then open the HTTP section
+    - Click the "Generate new API key" button<br>
+      <br>
+      <!-- ![Landing](assets/ds4sd-api-key.png) -->
+      <a href="https://raw.githubusercontent.com/acceleratedscience/open-ad-toolkit/main/assets/ds4sd-api-key.png" target="_blank"><img src="https://raw.githubusercontent.com/acceleratedscience/open-ad-toolkit/main/assets/ds4sd-api-key.png" /></a>
+
+1. Once inside the OpenAD client, you'll be prompted to authenticate when activating the Deep Search (DS4SD) toolkit. When running `set context ds4sd` :
+
+   - **Hostname:** [https://sds.app.accelerate.science](https://sds.app.accelerate.science)
+   - **Email:** Your email
+   - **API_key:** The DS4SD API key you obtained following the instructions above.
+
+1. You should get a message saying you successfully logged in.
+
+    > **Note:** Your DS4SD auth config file is saved as `~/.openad/deepsearch_api.cred`. If you ever want to reset your DS4SD login information you can run `set context ds4sd reset`, or you can delete this file.<br>
+
+</div>
+</details>
+
+<details>
+<summary>Register with RXN</summary>
+<div markdown="block">
+
+1. First, you'll need to generate an API key on the RXN website.
+
+    -   Sign up for an RXN account at [rxn.app.accelerate.science](https://rxn.app.accelerate.science)
+    -   Obtain your API key by clicking the user profile icon in the top right hand corner and select "My profile".<br>
+        <br>
+        <!-- ![Landing](assets/rxn-api-key.png) -->
+        <a href="https://raw.githubusercontent.com/acceleratedscience/open-ad-toolkit/main/assets/rxn-api-key.png" target="_blank"><img src="https://raw.githubusercontent.com/acceleratedscience/open-ad-toolkit/main/assets/rxn-api-key.png" /></a>
+
+1. When setting the context to RXN using `set context rxn` you'll be prompted to create a new auth configuration file:
+
+    -   **Hostname:** [https://rxn.app.accelerate.science](https://rxn.app.accelerate.science)<br>
+    -   **API_key:** The RXN API key you obtained following the instructions above.
+
+1. You should get a message saying you successfully logged in.<br>
+
+    > **Note:** Your RXN auth config file is saved as `~/.openad/rxn_api.cred`. If you ever want to reset your RXN login information you can run `set context rxn reset`, or you can delete this file.<br>
+
+</div>
+</details>
+

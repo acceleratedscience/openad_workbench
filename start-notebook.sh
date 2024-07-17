@@ -39,6 +39,8 @@ if [ ! -f "/opt/app-root/src/.bashrc" ]; then
 fi
 
 # Start the JupyterLab notebook
+python /opt/app-root/bin/process_creds.py
+
 start_process jupyter lab ${NOTEBOOK_PROGRAM_ARGS} \
     --ServerApp.ip=0.0.0.0 \
     --ServerApp.allow_origin="*" \
