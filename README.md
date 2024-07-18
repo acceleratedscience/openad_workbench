@@ -59,9 +59,9 @@ To Install Docker Engine see [Install Docker Engine](https://docs.docker.com/eng
 First of all make sure if you are using podman, you have at least 4GB of memory available to podman
 e.g. <br>
 ```
-podman stop
+podman machine stop
 podman machine set --cpus 4 --memory 4096
-podman start
+podman machine start
 ```
 
 
