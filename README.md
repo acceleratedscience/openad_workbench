@@ -48,8 +48,10 @@ The following provides the the template for building a Jupyter Workbench Runtime
 [Open Data Hub ODH](http://opendatahub.io/) or [Red Hat OpenShift Data Science RHODS](https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-data-science)
   or podman / Docker Locally. 
 <br>
-  It loads the Openad lookit and a minimal image of the UBI9 jupyter notebooks with prebuilt note books for using OpenAD.
+  It loads the Openad Toolkit and a minimal image of the UBI9 jupyter notebooks with prebuilt note books for using OpenAD.
 <br>
+
+
 
 To install podman see [install instructions](https://podman.io/docs/installation)
 
@@ -67,6 +69,11 @@ podman start
 To build your image and deploy on podman/docker run<br>
 `podman/docker build -t openad_workbench https://github.com/acceleratedscience/openad_workbench.git#main`<br>
 
+
+### Using Ollama
+**NOTE:** when using the `tell me` you must pass the ip address of your ollama environment as an environment variable into the contianer e.g. add `-e OLLAMA_HOST=<ollama-server-ip>:11434` to your `podman run` command.
+If you get asked for api key just `enter` through the request and your connection will work.
+
 To run your workbench<br>
 `podman/docker run -d -p 8888:8888 --name my_workbench openad_workbench`
 
@@ -82,11 +89,12 @@ To delete your workbench container you will need to stop it then run the followi
 Once the Pod is Started use the url in your browser `127.0.0.1:8888` to enter your jupyter lab
 
 
-### Using your exiting Openad Workspaces and credentials
+### Using your existing Openad Workspaces and credentials
 
-The following instruction provides an alternative to allow you to use your desktops existing workspaces as well as use exisint RXN, Deep Search and LLM credentials.
+The following instruction provides an alternative to allow you to use your desktops existing workspaces as well as use exsiting RXN, Deep Search and LLM credentials.
 `podman/docker run -d -v $HOME/.openad:/opt/app-root/src/.openad:Z    -p 8888:8888  --name my_workbench openad_workbench`
 
+### Using your existing credentials and automating their usage via secrets.
 If you wish to create secrets to pre-load models and other credentials create 2 json files
 
 First called `openad_creds.json`
