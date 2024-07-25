@@ -1,6 +1,5 @@
+
 # Open Accelerated Discovery Workbench
-
-
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/openad)](https://pypi.org/project/openad/)
 [![PyPI version](https://img.shields.io/pypi/v/openad)](https://pypi.org/project/openad/)
@@ -69,7 +68,7 @@ To build your image and deploy on podman/docker run<br>
 `podman/docker build -t openad_workbench https://github.com/acceleratedscience/openad_workbench.git#main`<br>
 
 To run your workbench<br>
-`podman/docker run -d -p 8888:8888 -p 8024-8200:8024-8200  --name my_workbench openad_workbench`
+`podman/docker run -d -p 8888:8888 --name my_workbench openad_workbench`
 
 To stop your workbench:<br>
  `podman/docker stop my_workbench`
@@ -86,7 +85,7 @@ Once the Pod is Started use the url in your browser `127.0.0.1:8888` to enter yo
 ### Using your exiting Openad Workspaces and credentials
 
 The following instruction provides an alternative to allow you to use your desktops existing workspaces as well as use exisint RXN, Deep Search and LLM credentials.
-`podman/docker run -d -v $HOME/.openad:/opt/app-root/src/.openad:Z    -p 8888:8888 -p 8024-8200:8024-8200 --name my_workbench openad_workbench`
+`podman/docker run -d -v $HOME/.openad:/opt/app-root/src/.openad:Z    -p 8888:8888  --name my_workbench openad_workbench`
 
 If you wish to create secrets to pre-load models and other credentials create 2 json files
 
@@ -149,7 +148,7 @@ and <br>
 `podman secret create openad_models openad_models.json ` <br>
 
 Then run the following to run the container and access you notebooks
-`podman run -d --secret openad_creds --secret openad_models -p 8888:8888  -p 8024-8200:8024-8200   --name my_workbench openad_workbench`
+`podman run -d --secret openad_creds --secret openad_models -p 8888:8888 --name my_workbench openad_workbench`
 
 
 

@@ -71,8 +71,7 @@ COPY --chown=1001:0 requirements-jupyter.txt ./
 COPY --chown=1001:0 utils utils/
 COPY --chown=1001:0 start-notebook.sh ./
 COPY --chown=1001:0 process_creds.py ./
-# copy demo slide show
-COPY --chown=1001:0 Slide_Show.ipynb /opt/app-root/src
+# copy demo Menus
 COPY --chown=1001:0 Start.ipynb /opt/app-root/src
 COPY --chown=1001:0 start_menu.ipynb /opt/app-root/src
 
@@ -93,7 +92,8 @@ RUN echo "Installing softwares and packages" && \
     pip install --no-cache-dir ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     rm -f ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     pip install "jupyterlab_rise<0.40.0" && \
-    pip install --no-cache-dir -U git+https://github.com/acceleratedscience/open-ad-toolkit@skypilot_upgrade && \
+    #pip install --no-cache-dir -U git+https://github.com/acceleratedscience/open-ad-toolkit@skypilot_upgrade && \
+    pip install --no-cache-dir openad && \
     ipython profile create && \
     init_magic && \
     init_examples && \
@@ -138,7 +138,8 @@ COPY --chown=1001:0 custom.css $/opt/app-root/share/jupyter/custom/custom.css
 COPY --chown=1001:0 custom.css $/opt/app-root/share/jupyter/custom.css
 
 RUN sed -i "s/RELEASE/2023c/" /opt/app-root/share/jupyter/metadata/runtime-images/*.json  
-
+#RUN mkdir ~/.jupyter
+RUN echo -e  """from openad.app.global_var_lib import _repo_dir \nimport os \nc.ServerApp.allow_origin = '*'\nc.ServerApp.extra_static_paths = [os.path.join( f'{_repo_dir}/../', 'gui-build-proxy')]\nc.ServerApp.allow_remote_access = True\nc.ServerProxy.host_allowlist = ['localhost', '127.0.0.1','0.0.0.0']""" >> ~/.jupyter/jupyter_lab_config.py
 # Jupyter Server config to allow hidden files/folders in explorer. Ref: https://jupyterlab.readthedocs.io/en/latest/user/files.html#displaying-hidden-files
 # Jupyter Lab config to hide disabled exporters (WebPDF, Qtpdf, Qtpng)
 COPY --chown=1001:0 etc/ /opt/app-root/etc/jupyter/
