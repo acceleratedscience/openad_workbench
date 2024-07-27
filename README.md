@@ -123,7 +123,8 @@ First called `openad_creds.json`
 The seconds called `opend_models.json` like the following example "
 
 ```
-"auth_groups": {
+"{
+   auth_groups": {
         "default": "<API_key/Bearer token>"
     },
     "services": {
@@ -143,7 +144,7 @@ The seconds called `opend_models.json` like the following example "
             "auth_group": "default"
         },
         "molf": {
-            "host": "https://<url>>:8080/proxy",
+            "host": "https://<url>:8080/proxy",
             "inference-service": "molformer",
             "auth_group": "default"
         }
