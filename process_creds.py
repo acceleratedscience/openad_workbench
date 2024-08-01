@@ -1,6 +1,6 @@
 from openad.helpers import credentials
-from openad.openad_api import openad_api
 import glob, os, json, pickle
+from openad import OpenadAPI
 
 
 def extract_creds():
@@ -30,7 +30,7 @@ def assign_dict_value(input_dict: dict, path: str, value) -> dict:
 
 def place_creds():
     print("setting up credentials")
-    openad_app = openad_api()
+    openad_app = OpenadAPI()
     if not os.path.exists("/run/secrets/openad_creds"):
         return
     with open("/run/secrets/openad_creds", "r", encoding="utf-8") as handle:
@@ -61,7 +61,7 @@ def show_creds():
 
 def place_models():
     print(" setting up models for the services")
-    openad_app = openad_api()
+    openad_app = OpenadAPI()
     if not os.path.exists("/run/secrets/openad_models"):
         return
     with open("/run/secrets/openad_models", "r", encoding="utf-8") as handle:

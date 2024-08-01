@@ -21,6 +21,12 @@ if [ -n "${NOTEBOOK_BASE_URL}" ]; then
     NOTEBOOK_PROGRAM_ARGS+="--ServerApp.base_url=${NOTEBOOK_BASE_URL} "
 fi
 
+if [ -n "${NOTEBOOK_BASE_URL}" ]; then
+    NOTEBOOK_PROGRAM_ARGS+=" --LabApp.default_url=${NOTEBOOK_BASE_URL}/lab/tree/start_menu.ipynb "
+else
+    NOTEBOOK_PROGRAM_ARGS+=" --LabApp.default_url=/lab/workspaces/auto-s/tree/start_menu.ipynb "
+fi
+
 # Set default ServerApp.root_dir value if NOTEBOOK_ROOT_DIR variable is defined
 if [ -n "${NOTEBOOK_ROOT_DIR}" ]; then
     NOTEBOOK_PROGRAM_ARGS+="--ServerApp.root_dir=${NOTEBOOK_ROOT_DIR} "
@@ -39,10 +45,18 @@ if [ ! -f "/opt/app-root/src/.bashrc" ]; then
 fi
 
 # Start the JupyterLab notebook
+! [ -d "$HOME/openad_notebooks" ] && init_examples
+! [ -e "$HOME/Start.ipynb" ] && cp /opt/app-root/bin/Start.ipynb ./
+! [ -e "$HOME/start_menu.ipynb" ] && cp /opt/app-root/bin/start_menu.ipynb ./
+init_magic
+jupyter trust $HOME/openad_notebooks/*.ipynb && \
+jupyter trust $HOME/*.ipynb 
+
 python /opt/app-root/bin/process_creds.py
 
-start_process jupyter lab ${NOTEBOOK_PROGRAM_ARGS} \
-    --ServerApp.ip=0.0.0.0 \
-    --ServerApp.allow_origin="*" \
-    --ServerApp.open_browser=False  \
-    --ServerApp.token='' --LabApp.default_url='/lab/workspaces/auto-s/tree/start_menu.ipynb'
+start_process jupyter lab ${NOTEBOOK_PROGRAM_ARGS} 
+#start_process jupyter lab ${NOTEBOOK_PROGRAM_ARGS} \
+#    --ServerApp.ip=0.0.0.0 \
+#    --ServerApp.allow_origin="*" \
+#    --ServerApp.open_browser=False  \
+#    --ServerApp.token='' --LabApp.default_url='/lab/workspaces/auto-s/tree/start_menu.ipynb'
