@@ -66,13 +66,11 @@ WORKDIR /opt/app-root/bin
 
 # Copy packages list
 COPY --chown=1001:0 requirements-jupyter.txt ./
-
-# Copy notebook launcher and utils
 COPY --chown=1001:0 utils utils/
-COPY --chown=1001:0 process_creds.py ./
-# copy demo Menus
-COPY --chown=1001:0 Start.ipynb ./
-COPY --chown=1001:0 start_menu.ipynb ./
+
+
+
+
 
 # Streamlit extension installation
 COPY --chown=1001:0 streamlit-launcher.sh ./
@@ -80,6 +78,11 @@ COPY --chown=1001:0 streamlit-menu/dist/jupyterlab_streamlit_menu-0.1.0-py3-none
 
 # Copy Elyra setup to utils so that it's sourced at startup
 COPY --chown=1001:0 setup-elyra.sh ./utils/
+
+# copy demo Menus
+COPY --chown=1001:0 Start.ipynb ./
+COPY --chown=1001:0 start_menu.ipynb ./
+
 
 # Install packages and cleanup
 # (all commands are chained to minimize layer size)
@@ -94,7 +97,7 @@ RUN echo "Installing softwares and packages" && \
     pip install --no-cache-dir -U git+https://github.com/acceleratedscience/open-ad-toolkit@chemchat_updates && \
     #pip install --no-cache-dir openad && \
     ipython profile create && \
-    #init_magic && \
+    init_magic && \
     #init_examples && \
     #jupyter lab clean && 
     #jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
@@ -144,9 +147,12 @@ RUN sed -i "s/RELEASE/2023c/" /opt/app-root/share/jupyter/metadata/runtime-image
 #RUN echo -e  """from openad.app.global_var_lib import _repo_dir \nimport os \nc.ServerApp.ip='0.0.0.0'\nc.ServerApp.allow_origin = '*'\nc.LabApp.default_url='/lab/workspaces/auto-s/tree/start_menu.ipynb'\nc.ServerApp.extra_static_paths = [os.path.join( f'{_repo_dir}/../', 'gui-build-proxy')]\nc.ServerApp.allow_remote_access = True\nc.ServerProxy.host_allowlist = ['localhost', '127.0.0.1','0.0.0.0']""" >> ~/.jupyter/jupyter_lab_config.py
 # Jupyter Server config to allow hidden files/folders in explorer. Ref: https://jupyterlab.readthedocs.io/en/latest/user/files.html#displaying-hidden-files
 # Jupyter Lab config to hide disabled exporters (WebPDF, Qtpdf, Qtpng)
+
+COPY --chown=1001:0 process_creds.py ./
 COPY --chown=1001:0 etc/ /opt/app-root/etc/jupyter/
 COPY --chown=1001:0 etc/  /opt/app-root/src/.jupyter/
 COPY --chown=1001:0 start-notebook.sh ./
+# Copy notebook launcher and utils
 
 
 WORKDIR /opt/app-root/src

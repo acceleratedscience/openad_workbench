@@ -37,20 +37,29 @@ fi
 # Add additional arguments if NOTEBOOK_ARGS variable is defined
 if [ -n "${NOTEBOOK_ARGS}" ]; then
     NOTEBOOK_PROGRAM_ARGS+=${NOTEBOOK_ARGS}
-fi
+elif [ -n "${OPENAD_AUTH}" ]; then
+    NOTEBOOK_PROGRAM_ARGS+=" --ServerApp.token=${OPENAD_AUTH} "
 
+fi
+NOTEBOOK_PROGRAM_ARGS+=" --ServerApp.disable_check_xsrf=True "
 # Add .bashrc for custom promt if not present
 if [ ! -f "/opt/app-root/src/.bashrc" ]; then
   echo 'PS1="\[\033[34;1m\][\$(pwd)]\[\033[0m\]\n\[\033[1;0m\]$ \[\033[0m\]"' > /opt/app-root/src/.bashrc
 fi
 
 # Start the JupyterLab notebook
-! [ -d "$HOME/openad_notebooks" ] && init_examples
+! [ -d "$HOME/openad_notebooks" ] && init_examples && ipython profile create && init_magic
 ! [ -e "$HOME/Start.ipynb" ] && cp /opt/app-root/bin/Start.ipynb ./
 ! [ -e "$HOME/start_menu.ipynb" ] && cp /opt/app-root/bin/start_menu.ipynb ./
-init_magic
+
+! [ -d "/opt/app-root/src/.jupyter" ] && mkdir /opt/app-root/src/.jupyter
+cp  /opt/app-root/etc/jupyter/jupyter_lab_config.py /opt/app-root/src/.jupyter/
+
+
 jupyter trust $HOME/openad_notebooks/*.ipynb && \
 jupyter trust $HOME/*.ipynb 
+#initialise openad files
+openad "?"
 
 python /opt/app-root/bin/process_creds.py
 
