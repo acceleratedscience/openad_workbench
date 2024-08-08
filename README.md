@@ -158,6 +158,7 @@ and <br>
 Then run the following to run the container and access you notebooks
 `podman run -d --secret openad_creds --secret openad_models -p 8888:8888 --name my_workbench openad_workbench`
 
+Alternatively if you want to use Environment varaibles, you can pass the openad_creds a as an environment varaible `OPENAD_CREDS` and for models `OPENAD_AUTH`. for `OPENAD_AUTH` simply pass your Bearer Token, and the tool will catalog all Models you are entited to.
 
 
 ### Registration
