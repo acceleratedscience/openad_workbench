@@ -1,16 +1,15 @@
 from openad.helpers import credentials
-from openad.openad_api import openad_api
 import glob, os, json, pickle
+from openad import OpenadAPI
+import jwt, time
 
 
 def extract_creds():
     creds = {}
     for file in glob.glob(os.path.expanduser("~/.openad/*.cred")):
         creds[os.path.basename(file).split("_")[0]] = credentials.load_credentials(file)
-
     with open("cred_dump.json", "w", encoding="utf-8") as handle:
         json.dump(creds, handle)
-
     return
 
 
@@ -30,11 +29,15 @@ def assign_dict_value(input_dict: dict, path: str, value) -> dict:
 
 def place_creds():
     print("setting up credentials")
-    openad_app = openad_api()
-    if not os.path.exists("/run/secrets/openad_creds"):
+    openad_app = OpenadAPI()
+
+    if os.path.exists("/run/secrets/openad_creds"):
+        with open("/run/secrets/openad_creds", "r", encoding="utf-8") as handle:
+            creds = json.load(handle)
+    elif os.environ.get("OPENAD_CREDS") is not None:
+        creds = json.loads(os.environ.get("OPENAD_CREDS"))
+    else:
         return
-    with open("/run/secrets/openad_creds", "r", encoding="utf-8") as handle:
-        creds = json.load(handle)
 
     for cred in creds:
         new_credentials = credentials.DEFAULT_CREDENTIALS.copy()
@@ -61,20 +64,54 @@ def show_creds():
 
 def place_models():
     print(" setting up models for the services")
-    openad_app = openad_api()
-    if not os.path.exists("/run/secrets/openad_models"):
+    openad_app = OpenadAPI()
+
+    if os.environ.get("OPENAD_AUTH") is not None:
+        token = os.environ.get("OPENAD_AUTH")
+        bearer = token
+        try:
+            decoded_token = jwt.decode(
+                bearer, options={"verify_at_hash": False, "verify_signature": False}, verify=False
+            )
+        except:
+            print("invalid models token")
+            return
+        expiry_time = decoded_token["exp"]
+        models = decoded_token["scp"]
+        host = "https://open.accelerator.cafe/proxy"
+        # Convert expiry time to a human-readable format
+        expiry_datetime = time.strftime("%a %b %e, %G  at %R", time.localtime(expiry_time))
+        x = openad_app.request(f"model auth add group default with '{token}' ")
+        for model in models:
+            if model == "generation":
+                model_alias = "gen"
+            elif model == "moler":
+                model_alias = "moler"
+            else:
+                model_alias = model[:4]
+            x = openad_app.request(
+                f"catalog model service from remote '{host}' as  {model_alias}  USING (Inference-Service={model}  auth_group=default )"
+            )
+            print("loading model :" + model)
         return
-    with open("/run/secrets/openad_models", "r", encoding="utf-8") as handle:
-        models = json.load(handle)
-        if "auth_groups" in models:
-            for group in models["auth_groups"]:
-                x = openad_app.request(f"model auth add group {group} with '{models['auth_groups'][group]}' ")
-                print("catalog model =  " + x)
-        if "services" in models:
-            for service in models["services"]:
-                x = openad_app.request(
-                    f"catalog model service from remote '{models['services'][service]['host']}' as  {service}  USING (Inference-Service={models['services'][service]['inference-service']}  auth_group={models['services'][service]['auth_group']} )"
-                )
+    elif os.path.exists("/run/secrets/openad_models"):
+
+        with open("/run/secrets/openad_models", "r", encoding="utf-8") as handle:
+            models = json.load(handle)
+
+    elif os.environ.get("OPENAD_MODELS") is not None:
+        models = json.loads(os.environ.get("OPENAD_MODELS"))
+    else:
+        return
+    if "auth_groups" in models:
+        for group in models["auth_groups"]:
+            x = openad_app.request(f"model auth add group {group} with '{models['auth_groups'][group]}' ")
+            print("catalog model =  " + x)
+    if "services" in models:
+        for service in models["services"]:
+            x = openad_app.request(
+                f"catalog model service from remote '{models['services'][service]['host']}' as  {service}  USING (Inference-Service={models['services'][service]['inference-service']}  auth_group={models['services'][service]['auth_group']} )"
+            )
 
 
 if __name__ == "__main__":
