@@ -1,0 +1,76 @@
+apiVersion: kubeflow.org/v1
+kind: Notebook
+metadata:
+  name: openad-notebook
+  annotations:
+    notebooks.opendatahub.io/inject-oauth: "true"
+spec:
+  template:
+    spec:
+      containers:
+        - name: openad-notebook
+          image: docker.io/phildowney/openshift_ai:latest
+          imagePullPolicy: Always
+          workingDir: /opt/app-root/src
+          env:
+            - name: NOTEBOOK_ARGS
+              value: |
+                --ServerApp.port=8888
+                --ServerApp.token=''
+                --ServerApp.password=''
+                --ServerApp.base_url=/notebook/openad/phil
+            - name: JUPYTER_IMAGE
+              value: >-
+                docker.io/phildowney/openshift_ai:latest
+            - name: PIP_CERT
+              value: /etc/pki/tls/custom-certs/ca-bundle.crt
+            - name: REQUESTS_CA_BUNDLE
+              value: /etc/pki/tls/custom-certs/ca-bundle.crt
+            - name: SSL_CERT_FILE
+              value: /etc/pki/tls/custom-certs/ca-bundle.crt
+            - name: PIPELINES_SSL_SA_CERTS
+              value: /etc/pki/tls/custom-certs/ca-bundle.crt
+            - name: GIT_SSL_CAINFO
+              value: /etc/pki/tls/custom-certs/ca-bundle.crt
+            - name: NB_PREFIX
+              value: /notebook/openad/phil
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            runAsUser: 1001090000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          ports:
+            - name: notebook-port
+              containerPort: 8888
+              protocol: TCP
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: phil-notebook-storage
+              mountPath: /opt/app-root/src
+            - name: shm
+              mountPath: /dev/shm
+            - name: trusted-ca
+              readOnly: true
+              mountPath: /etc/pki/tls/custom-certs/ca-bundle.crt
+              subPath: ca-bundle.crt
+          terminationMessagePolicy: File
+          resources:
+            requests:
+              cpu: "2"
+              memory: 8Gi
+            limits:
+              cpu: "2"
+              memory: 8Gi
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+            httpGet:
+              scheme: HTTP
+              path: /notebook/openad/phil/api
+              port: notebook-port
+EOF
