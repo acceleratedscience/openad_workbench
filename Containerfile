@@ -84,9 +84,11 @@ COPY --chown=1001:0 Start.ipynb ./
 COPY --chown=1001:0 start_menu.ipynb ./
 
 
+
+
 # Install packages and cleanup
 # (all commands are chained to minimize layer size)
-
+RUN echo "1"
 RUN echo "Installing softwares and packages" && \
     # Install Python packages \
     npm install @ibm/plex && \
@@ -94,8 +96,10 @@ RUN echo "Installing softwares and packages" && \
     pip install --no-cache-dir ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     rm -f ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     pip install "jupyterlab_rise<0.40.0" && \
-    pip install --no-cache-dir -U git+https://github.com/acceleratedscience/open-ad-toolkit@chemchat_updates && \
-    #pip install --no-cache-dir openad && \
+    # requred as it crashes on openad install due to higher version causing problem with 3.10.7 rust code
+    #pip install "orjson==3.10.3" && \ 
+    #pip install --no-cache-dir -U git+https://github.com/acceleratedscience/open-ad-toolkit@chemchat_updates && \
+    pip install --no-cache-dir openad && \
     ipython profile create && \
     init_magic && \
     #init_examples && \
