@@ -68,10 +68,6 @@ WORKDIR /opt/app-root/bin
 COPY --chown=1001:0 requirements-jupyter.txt ./
 COPY --chown=1001:0 utils utils/
 
-
-
-
-
 # Streamlit extension installation
 COPY --chown=1001:0 streamlit-launcher.sh ./
 COPY --chown=1001:0 streamlit-menu/dist/jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl ./
@@ -83,12 +79,8 @@ COPY --chown=1001:0 setup-elyra.sh ./utils/
 COPY --chown=1001:0 Start.ipynb ./
 COPY --chown=1001:0 start_menu.ipynb ./
 
-
-
-
 # Install packages and cleanup
 # (all commands are chained to minimize layer size)
-RUN echo "1"
 RUN echo "Installing softwares and packages" && \
     # Install Python packages \
     npm install @ibm/plex && \
@@ -97,17 +89,9 @@ RUN echo "Installing softwares and packages" && \
     rm -f ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     pip install "jupyterlab_rise<0.40.0" && \
     # requred as it crashes on openad install due to higher version causing problem with 3.10.7 rust code
-    #pip install "orjson==3.10.3" && \ 
-    #pip install --no-cache-dir -U git+https://github.com/acceleratedscience/open-ad-toolkit@chemchat_updates && \
     pip install --no-cache-dir openad && \
     ipython profile create && \
-    init_magic && \
-    #init_examples && \
-    #jupyter lab clean && 
-    #jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
-    #jupyter trust ~/openad_notebooks/*.ipynb && \
-    #jupyter trust ~/*.ipynb  && \
-    #pip install --no-cache-dir openad && \
+    init_magic && \ 
     # setup path for runtime configuration \
     mkdir /opt/app-root/runtimes && \
     # switch to Data Science Pipeline \
@@ -145,12 +129,6 @@ COPY --chown=1001:0 custom.css $/opt/app-root/share/jupyter/custom.css
 COPY --chown=1001:0 jupyter_lab_config.py /opt/app-root/src/.jupyter/jupyter_lab_config.py
 
 RUN sed -i "s/RELEASE/2023c/" /opt/app-root/share/jupyter/metadata/runtime-images/*.json  
-#RUN mkdir ~/.jupyter
-#RUN echo -e  """from openad.app.global_var_lib import _repo_dir \nimport os \nc.ServerApp.ip='0.0.0.0'\nc.ServerApp.allow_origin = '*'\nc.ServerApp.extra_static_paths = [os.path.join( f'{_repo_dir}/../', 'gui-build-proxy')]\nc.ServerApp.allow_remote_access = True\nc.ServerProxy.host_allowlist = ['localhost', '127.0.0.1','0.0.0.0']""" >> ~/.jupyter/jupyter_lab_config.py
-
-#RUN echo -e  """from openad.app.global_var_lib import _repo_dir \nimport os \nc.ServerApp.ip='0.0.0.0'\nc.ServerApp.allow_origin = '*'\nc.LabApp.default_url='/lab/workspaces/auto-s/tree/start_menu.ipynb'\nc.ServerApp.extra_static_paths = [os.path.join( f'{_repo_dir}/../', 'gui-build-proxy')]\nc.ServerApp.allow_remote_access = True\nc.ServerProxy.host_allowlist = ['localhost', '127.0.0.1','0.0.0.0']""" >> ~/.jupyter/jupyter_lab_config.py
-# Jupyter Server config to allow hidden files/folders in explorer. Ref: https://jupyterlab.readthedocs.io/en/latest/user/files.html#displaying-hidden-files
-# Jupyter Lab config to hide disabled exporters (WebPDF, Qtpdf, Qtpng)
 
 COPY --chown=1001:0 process_creds.py ./
 COPY --chown=1001:0 etc/ /opt/app-root/etc/jupyter/
@@ -158,12 +136,7 @@ COPY --chown=1001:0 etc/  /opt/app-root/src/.jupyter/
 COPY --chown=1001:0 start-notebook.sh ./
 # Copy notebook launcher and utils
 
-
 WORKDIR /opt/app-root/src
-
-RUN openad ?
-
-
 
 ENTRYPOINT ["start-notebook.sh"]
 
