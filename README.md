@@ -91,13 +91,18 @@ Once the Pod is Started use the url in your browser `127.0.0.1:8888` to enter yo
 
 ### Using your existing Openad Workspaces and credentials
 
+
 The following instruction provides an alternative to allow you to use your desktops existing workspaces as well as use exsiting RXN, Deep Search and LLM credentials.
 `podman/docker run -d -v $HOME/.openad:/opt/app-root/src/.openad:Z    -p 8888:8888  --name my_workbench openad_workbench`
 
-### Using your existing credentials and automating their usage via secrets.
-If you wish to create secrets to pre-load models and other credentials create 2 json files
+<details>
+<summary> Add Plugin and LLM Credentials </summary>
+<div markdown="block">
 
-First called `openad_creds.json`
+### Using your existing credentials and automating their usage via secrets.
+There are 2 methods to automatically adding you credentials for tools like RXN and Deep Search.
+
+First the user must create a json document called `openad_creds.json`
 
 ```
 {
@@ -119,12 +124,38 @@ First called `openad_creds.json`
     }
 }
 ```
+***Applying the Credentials json*** <br>
+Options fot applying: <br>
+1. Include the json document as a secret by running  run `podman secret create openad_creds openad_creds.json ` <br>
+Then include in  your container startup with the option `--secret openad_creds`  <br>
 
-The seconds called `opend_models.json` like the following example "
+`podman run -d --secret openad_creds  -p 8888:8888 --name my_workbench openad_workbench`
+
+
+2. Create an environment variable called `OPENAD_CREDS` with the json as its value and use the -e option `-e OPENAD_CREDS` in your commands. <br>
+e.g. <br>
+`export OPENAD_CREDS={....}` <br>
+
+`podman run -d -e OPENAD_CREDS  -p 8888:8888 --name my_workbench openad_workbench`
+
+</div>
+</details>
+
+<details>
+<summary>Add Models at Startup</summary>
+<div markdown="block">
+
+There are two different approaches for registering Models <br>
+
+1. Secret Method
+
+Create a file called `opend_models.json` like the following example. 
+
 
 ```
-"{
+{
    auth_groups": {
+
         "default": "<API_key/Bearer token>"
     },
     "services": {
@@ -152,15 +183,18 @@ The seconds called `opend_models.json` like the following example "
  }
 ```
 
-Then run `podman secret create openad_creds openad_creds.json ` <br>
-and <br>
+The above is broken out into a authgroup and services. Place your API key in the `auth_groups` section where you see `<API_key/Bearer token>` and for each service specify the short name you wish to use then the host / inference-service name of the service.
+ <br>
 `podman secret create openad_models openad_models.json ` <br>
 
-Then run the following to run the container and access you notebooks
-`podman run -d --secret openad_creds --secret openad_models -p 8888:8888 --name my_workbench openad_workbench`
+Then run the following to run the container and access you notebooks <br>
+`podman run -d --secret openad_creds --secret openad_models -p 8888:8888 --name my_workbench openad_workbench`<br>
 
-Alternatively if you want to use Environment varaibles, you can pass the openad_creds a as an environment varaible `OPENAD_CREDS` and for models `OPENAD_AUTH`. for `OPENAD_AUTH` simply pass your Bearer Token, and the tool will catalog all Models you are entited to.
+2. Environment Variable Method: <br>
+Alternatively you can use the `OPEN_AUTH` Environment variable method by creating an environment varialbe by this name with only your authorisation JWT token. The Container on startup with decode the key and create the respective groups. this only works for the `open.accelerator.cafe` host.
 
+</div>
+</details>
 
 ### Registration
 
