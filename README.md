@@ -60,9 +60,9 @@ To Install Docker Engine see [Install Docker Engine](https://docs.docker.com/eng
 First of all make sure if you are using podman, you have at least 4GB of memory available to podman
 e.g. <br>
 ```
-podman stop
+podman machine stop
 podman machine set --cpus 4 --memory 4096
-podman start
+podman machine start
 ```
 
 
@@ -131,6 +131,7 @@ Then include in  your container startup with the option `--secret openad_creds` 
 
 `podman run -d --secret openad_creds  -p 8888:8888 --name my_workbench openad_workbench`
 
+
 2. Create an environment variable called `OPENAD_CREDS` with the json as its value and use the -e option `-e OPENAD_CREDS` in your commands. <br>
 e.g. <br>
 `export OPENAD_CREDS={....}` <br>
@@ -151,8 +152,10 @@ There are two different approaches for registering Models <br>
 Create a file called `opend_models.json` like the following example. 
 
 
-```{
-"auth_groups": {
+```
+{
+   auth_groups": {
+
         "default": "<API_key/Bearer token>"
     },
     "services": {
@@ -172,7 +175,7 @@ Create a file called `opend_models.json` like the following example.
             "auth_group": "default"
         },
         "molf": {
-            "host": "https://<url>>:8080/proxy",
+            "host": "https://<url>:8080/proxy",
             "inference-service": "molformer",
             "auth_group": "default"
         }
