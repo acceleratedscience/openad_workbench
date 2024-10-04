@@ -16,6 +16,9 @@ if [ -n "${NOTEBOOK_PORT}" ]; then
     NOTEBOOK_PROGRAM_ARGS+="--ServerApp.port=${NOTEBOOK_PORT} "
 fi
 
+
+
+
 # Set default ServerApp.base_url value if NOTEBOOK_BASE_URL variable is defined
 if [ -n "${NOTEBOOK_BASE_URL}" ]; then
     NOTEBOOK_PROGRAM_ARGS+="--ServerApp.base_url=${NOTEBOOK_BASE_URL} "
@@ -48,7 +51,12 @@ if [ ! -f "/opt/app-root/src/.bashrc" ]; then
 fi
 
 # Start the JupyterLab notebook
+if [ -n "${NOTEBOOK_VERSION}" ]; then
+    git clone -b $NOTEBOOK_VERSION https://github.com/acceleratedscience/openad_notebooks.git
+    ipython profile create && init_magic
+fi 
 ! [ -d "$HOME/openad_notebooks" ] && init_examples && ipython profile create && init_magic
+
 ! [ -e "$HOME/Start.ipynb" ] && cp /opt/app-root/bin/Start.ipynb ./
 ! [ -e "$HOME/start_menu.ipynb" ] && cp /opt/app-root/bin/start_menu.ipynb ./
 

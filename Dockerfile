@@ -89,7 +89,8 @@ RUN echo "Installing softwares and packages" && \
     rm -f ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     pip install "jupyterlab_rise<0.40.0" && \
     # requred as it crashes on openad install due to higher version causing problem with 3.10.7 rust code
-    pip install --no-cache-dir openad && \
+    #pip install --no-cache-dir openad && \
+    pip install --no-cache-dir git+https://github.com/acceleratedscience/open-ad-toolkit.git@molecules_cleanup_moe && \
     ipython profile create && \
     init_magic && \ 
     # setup path for runtime configuration \
