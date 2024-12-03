@@ -54,6 +54,7 @@ fi
 if [ -n "${NOTEBOOK_VERSION}" ]; then
     git clone -b $NOTEBOOK_VERSION https://github.com/acceleratedscience/openad_notebooks.git
     ipython profile create && init_magic
+    echo "cloning external notebooks"
 fi 
 ! [ -d "$HOME/openad_notebooks" ] && init_examples && ipython profile create && init_magic
 

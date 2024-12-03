@@ -6,3 +6,4 @@ c.ServerApp.allow_origin = "*"
 c.ServerApp.extra_static_paths = [os.path.join(f"{_repo_dir}/../", "gui-build-proxy")]
 c.ServerApp.allow_remote_access = True
 c.ServerProxy.host_allowlist = ["localhost", "127.0.0.1", "0.0.0.0"]
+c.NotebookApp.tornado_settings = {"headers": {"Content-Security-Policy": "frame-ancestors self localhost:8080 "}}
