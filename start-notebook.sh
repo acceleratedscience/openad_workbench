@@ -20,14 +20,17 @@ fi
 
 
 # Set default ServerApp.base_url value if NOTEBOOK_BASE_URL variable is defined
-if [ -n "${NOTEBOOK_BASE_URL}" ]; then
-    NOTEBOOK_PROGRAM_ARGS+="--ServerApp.base_url=${NOTEBOOK_BASE_URL} "
+if [[ ${NOTEBOOK_ARGS} != *"--ServerApp.base_url"* ]];then
+    if [ -n "${NOTEBOOK_BASE_URL}" ]; then
+        NOTEBOOK_PROGRAM_ARGS+="--ServerApp.base_url=${NOTEBOOK_BASE_URL} "
+    fi
 fi
-
-if [ -n "${NOTEBOOK_BASE_URL}" ]; then
-    NOTEBOOK_PROGRAM_ARGS+=" --LabApp.default_url=${NOTEBOOK_BASE_URL}/lab/tree/start_menu.ipynb "
-else
-    NOTEBOOK_PROGRAM_ARGS+=" --LabApp.default_url=/lab/workspaces/auto-s/tree/start_menu.ipynb "
+if [[ ${NOTEBOOK_ARGS} != *"--LabApp.default_url"* ]];then
+    if [ -n "${NOTEBOOK_BASE_URL}" ]; then
+        NOTEBOOK_PROGRAM_ARGS+=" --LabApp.default_url=${NOTEBOOK_BASE_URL}/lab/tree/start_menu.ipynb "
+    else
+        NOTEBOOK_PROGRAM_ARGS+=" --LabApp.default_url=/lab/workspaces/auto-s/tree/start_menu.ipynb "
+    fi
 fi
 
 # Set default ServerApp.root_dir value if NOTEBOOK_ROOT_DIR variable is defined
@@ -44,6 +47,8 @@ elif [ -n "${OPENAD_AUTH}" ]; then
     NOTEBOOK_PROGRAM_ARGS+=" --ServerApp.token=${OPENAD_AUTH} "
 
 fi
+
+
 NOTEBOOK_PROGRAM_ARGS+=" --ServerApp.disable_check_xsrf=True "
 # Add .bashrc for custom promt if not present
 if [ ! -f "/opt/app-root/src/.bashrc" ]; then
@@ -60,6 +65,11 @@ fi
 
 ! [ -e "$HOME/Start.ipynb" ] && cp /opt/app-root/bin/Start.ipynb ./
 ! [ -e "$HOME/start_menu.ipynb" ] && cp /opt/app-root/bin/start_menu.ipynb ./
+! [ -e "$HOME/aabindings.ipynb" ] && cp /opt/app-root/bin/aabindings.ipynb ./
+! [ -e "$HOME/aabindings_advanced.ipynb" ] && cp /opt/app-root/bin/aabindings_advanced.ipynb ./
+! [ -e "$HOME/antigens.csv" ] && cp /opt/app-root/bin/antigens.csv ./
+! [ -e "$HOME/styles" ] && cp -r "$HOME/openad_notebooks/styles" ./
+! [ -e "$HOME/media" ] && cp -r "$HOME/openad_notebooks/media" ./
 
 ! [ -d "/opt/app-root/src/.jupyter" ] && mkdir /opt/app-root/src/.jupyter
 cp  /opt/app-root/etc/jupyter/jupyter_lab_config.py /opt/app-root/src/.jupyter/

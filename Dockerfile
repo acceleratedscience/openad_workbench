@@ -78,6 +78,10 @@ COPY --chown=1001:0 setup-elyra.sh ./utils/
 # copy demo Menus
 COPY --chown=1001:0 Start.ipynb ./
 COPY --chown=1001:0 start_menu.ipynb ./
+COPY --chown=1001:0 Start.ipynb ./
+COPY --chown=1001:0 aabindings.ipynb ./
+COPY --chown=1001:0 aabindings_advanced.ipynb ./
+COPY --chown=1001:0 antigens.csv ./
 
 # Install packages and cleanup
 # (all commands are chained to minimize layer size)
@@ -90,7 +94,7 @@ RUN echo "Installing softwares and packages" && \
     pip install "jupyterlab_rise<0.40.0" && \
     # requred as it crashes on openad install due to higher version causing problem with 3.10.7 rust code
     #pip install --no-cache-dir openad && \
-    pip install --no-cache-dir git+https://github.com/acceleratedscience/open-ad-toolkit.git@molecules_cleanup_moe && \
+    pip install --no-cache-dir git+https://github.com/acceleratedscience/open-ad-toolkit.git && \
     ipython profile create && \
     init_magic && \ 
     # setup path for runtime configuration \

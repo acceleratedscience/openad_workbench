@@ -3,6 +3,20 @@ import glob, os, json, pickle
 from openad import OpenadAPI
 import jwt, time
 
+MODEL_DEFAULT_MASTER = {
+    "bmfm": "bmfm",
+    "bmfm-mammal": "bmfm_pm",
+    "bmfm-small-molecules": "bmfm_sm",
+    "generation": "gen",
+    "moler": "moler",
+    "molformer": "molf",
+    "pfas": "pfas",
+    "properties": "prop",
+    "smi-ted": "smi",
+    "bi-aa-binding": "bi",
+}
+PROXY_URL = "https://open.accelerator.cafe/proxy"
+
 
 def extract_creds():
     creds = {}
@@ -66,9 +80,18 @@ def place_models():
     print(" setting up models for the services")
     openad_app = OpenadAPI()
 
+    if os.environ.get("OPENAD_MODEL_ALIAS") is not None:
+        aliases = os.environ.get("OPENAD_MODEL_ALIAS")
+    else:
+        aliases = MODEL_DEFAULT_MASTER
+
     if os.environ.get("OPENAD_AUTH") is not None:
-        token = os.environ.get("OPENAD_AUTH")
-        bearer = token
+        bearer = os.environ.get("OPENAD_AUTH")
+    elif os.environ.get("PROXY_KEY") is not None:
+        bearer = os.environ.get("PROXY_KEY")
+    else:
+        bearer = None
+    if bearer is not None:
         try:
             decoded_token = jwt.decode(
                 bearer, options={"verify_at_hash": False, "verify_signature": False}, verify=False
@@ -78,21 +101,21 @@ def place_models():
             return
         expiry_time = decoded_token["exp"]
         models = decoded_token["scp"]
-        host = "https://open.accelerator.cafe/proxy"
+        if os.environ.get("PROXY_URL") is not None:
+            host = os.environ.get("PROXY_URL")
+        else:
+            host = PROXY_URL
         # Convert expiry time to a human-readable format
         expiry_datetime = time.strftime("%a %b %e, %G  at %R", time.localtime(expiry_time))
-        x = openad_app.request(f"model auth add group default with '{token}' ")
+        x = openad_app.request("model auth remove group default ")
+        x = openad_app.request(f"model auth add group default with '{bearer}' ")
         for model in models:
-            if model == "generation":
-                model_alias = "gen"
-            elif model == "moler":
-                model_alias = "moler"
-            else:
-                model_alias = model[:4]
-            x = openad_app.request(
-                f"catalog model service from remote '{host}' as  {model_alias}  USING (Inference-Service={model}  auth_group=default )"
-            )
-            print("loading model :" + model)
+            if model in aliases.keys():
+                x = openad_app.request(f"uncatalog model service   {aliases[model]} ")
+                x = openad_app.request(
+                    f"catalog model service from remote '{host}' as  {aliases[model]}  USING (Inference-Service={model}  auth_group=default )"
+                )
+                print("loading model :" + model)
         return
     elif os.path.exists("/run/secrets/openad_models"):
 
@@ -103,6 +126,7 @@ def place_models():
         models = json.loads(os.environ.get("OPENAD_MODELS"))
     else:
         return
+
     if "auth_groups" in models:
         for group in models["auth_groups"]:
             x = openad_app.request(f"model auth add group {group} with '{models['auth_groups'][group]}' ")
@@ -115,5 +139,5 @@ def place_models():
 
 
 if __name__ == "__main__":
-    place_creds()
+    # place_creds()
     place_models()
