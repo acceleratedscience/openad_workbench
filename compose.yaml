@@ -1,0 +1,58 @@
+
+services:
+  openad_properties:
+    image: quay.io/ibmdpdev/openad-properties:latest
+    container_name: properties
+    hostname: openad_properties
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${HOME}/.gt4sd:/root/.gt4sd:Z
+      - ${HOME}/.oracle:/root/.oracle:Z
+      - ${HOME}/.cache:/root/.cache:Z
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    
+    
+
+  openad_generation:
+    image: quay.io/ibmdpdev/openad-generation:latest
+    container_name: generation
+    hostname: openad_generation
+    ports:
+      - "8090:8080"
+    volumes:
+      - ${HOME}/.gt4sd:/root/.gt4sd:Z
+      - ${HOME}/.oracle:/root/.oracle:Z
+      - ${HOME}/.cache:/root/.cache:Z
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+   
+  
+
+  openad_materials_wb:
+    image: quay.io/ibmdpdev/openad_workbench:latest
+    container_name: materials_wb
+    hostname: materials_workbench
+    ports:
+      - "8888:8888"
+    volumes:
+      - ${HOME}/MATERIALS/.openad:/opt/app-root/src/.openad:Z
+    environment:
+      - NOTEBOOK_ARGS= --ServerApp.token=''
+      - NOTEBOOK_VERSION=materials
+    
+  
+  
