@@ -142,9 +142,9 @@ RUN sed -i "s/RELEASE/2023c/" /opt/app-root/share/jupyter/metadata/runtime-image
 COPY --chown=1001:0 process_creds.py ./
 COPY --chown=1001:0 etc/ /opt/app-root/etc/jupyter/
 COPY --chown=1001:0 etc/  /opt/app-root/src/.jupyter/
-#COPY --chown=1001:0 aabindings.ipynb ./
+COPY --chown=1001:0 abagbindings_demo.ipynb ./
 #COPY --chown=1001:0 aabindings_advanced.ipynb ./
-#COPY --chown=1001:0 antigens.csv ./
+COPY --chown=1001:0 abag_input.csv ./
 #RUN echo "start notebook"
 COPY --chown=1001:0 start-notebook.sh ./
 # Copy notebook launcher and utils

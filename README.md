@@ -188,7 +188,7 @@ Then run the following to run the container and access you notebooks <br>
 `podman run -d --secret openad_creds --secret openad_models -p 8888:8888 --name my_workbench openad_workbench`<br>
 
 2. Environment Variable Method: <br>
-Alternatively you can use the `OPEN_AUTH` Environment variable method by creating an environment varialbe by this name with only your authorisation JWT token. The Container on startup with decode the key and create the respective groups. this only works for the `open.accelerator.cafe` host.
+Alternatively you can use the `OPEN_AUTH` or `PROXY_KEY` Environment variable method by creating an environment varialbe by this name with only your authorisation JWT token. The Container on startup with decode the key and create the respective groups. this only works for the `open.accelerator.cafe` host.
 
 </div>
 </details>

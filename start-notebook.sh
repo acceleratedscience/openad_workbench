@@ -65,9 +65,8 @@ fi
 
 ! [ -e "$HOME/Start.ipynb" ] && cp /opt/app-root/bin/Start.ipynb ./
 ! [ -e "$HOME/start_menu.ipynb" ] && cp /opt/app-root/bin/start_menu.ipynb ./
-! [ -e "$HOME/aabindings.ipynb" ] && cp /opt/app-root/bin/aabindings.ipynb ./
-! [ -e "$HOME/aabindings_advanced.ipynb" ] && cp /opt/app-root/bin/aabindings_advanced.ipynb ./
-! [ -e "$HOME/antigens.csv" ] && cp /opt/app-root/bin/antigens.csv ./
+! [ -e "$HOME/abagbindings_demo.ipynb" ] && cp /opt/app-root/bin/abagbindings_demo.ipynb ./
+! [ -e "$HOME/antigens.csv" ] && cp /opt/app-root/bin/abag_input.csv ./
 ! [ -e "$HOME/styles" ] && cp -r "$HOME/openad_notebooks/styles" ./
 ! [ -e "$HOME/media" ] && cp -r "$HOME/openad_notebooks/media" ./
 

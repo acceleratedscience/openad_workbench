@@ -139,5 +139,5 @@ def place_models():
 
 
 if __name__ == "__main__":
-    # place_creds()
+    place_creds()
     place_models()
