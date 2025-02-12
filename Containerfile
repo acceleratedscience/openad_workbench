@@ -94,9 +94,12 @@ RUN echo "Installing softwares and packages" && \
     pip install --no-cache-dir ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     rm -f ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     pip install --no-cache-dir "jupyterlab_rise<0.40.0" && \
+    #&& \
     #pip install --no-cache-dir openad && \
     # requred as it crashes on openad install due to higher version causing problem with 3.10.7 rust code
-    pip install --no-cache-dir -U git+https://github.com/acceleratedscience/open-ad-toolkit.git && \ 
+    pip install --no-cache-dir -U openad && \
+    pip install --no-cache-dir -U git+https://github.com/acceleratedscience/openad-plugin-ds.git && \ 
+    pip install --no-cache-dir -U git+https://github.com/acceleratedscience/openad-plugin-rxn.git && \ 
     pip install --no-cache-dir ipykernel --upgrade && \
     python3 -m   ipykernel install --user && \
     ipython profile create && \
@@ -142,12 +145,12 @@ RUN sed -i "s/RELEASE/2023c/" /opt/app-root/share/jupyter/metadata/runtime-image
 COPY --chown=1001:0 process_creds.py ./
 COPY --chown=1001:0 etc/ /opt/app-root/etc/jupyter/
 COPY --chown=1001:0 etc/  /opt/app-root/src/.jupyter/
-COPY --chown=1001:0 abagbindings_demo.ipynb ./
-#COPY --chown=1001:0 aabindings_advanced.ipynb ./
-COPY --chown=1001:0 abag_input.csv ./
+#COPY --chown=1001:0 abagbindings_demo.ipynb ./
+
+#COPY --chown=1001:0 abag_input.csv ./
 #RUN echo "start notebook"
 COPY --chown=1001:0 start-notebook.sh ./
-# Copy notebook launcher and utils
+
 
 WORKDIR /opt/app-root/src
 

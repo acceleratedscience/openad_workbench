@@ -46,6 +46,7 @@ WORKDIR /opt/app-root/bin/
 COPY --chown=1001:0 os-ide/os-packages.txt ./os-ide/os-packages.txt
 
 RUN yum install -y $(cat os-ide/os-packages.txt) && \
+yum install -y nodejs npm &&\
     rm -f os-ide/os-packages.txt && \
     yum -y clean all --enablerepo='*' && \
     rm -rf /var/cache/dnf && \
@@ -76,25 +77,31 @@ COPY --chown=1001:0 streamlit-menu/dist/jupyterlab_streamlit_menu-0.1.0-py3-none
 COPY --chown=1001:0 setup-elyra.sh ./utils/
 
 # copy demo Menus
-COPY --chown=1001:0 Start.ipynb ./
 COPY --chown=1001:0 start_menu.ipynb ./
 COPY --chown=1001:0 Start.ipynb ./
-COPY --chown=1001:0 aabindings.ipynb ./
-COPY --chown=1001:0 aabindings_advanced.ipynb ./
-COPY --chown=1001:0 antigens.csv ./
+
+
+
+
 
 # Install packages and cleanup
 # (all commands are chained to minimize layer size)
 RUN echo "Installing softwares and packages" && \
     # Install Python packages \
     npm install @ibm/plex && \
+    pip install --upgrade pip &&\
     pip install --no-cache-dir -r requirements-jupyter.txt && \
     pip install --no-cache-dir ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
     rm -f ./jupyterlab_streamlit_menu-0.1.0-py3-none-any.whl && \
-    pip install "jupyterlab_rise<0.40.0" && \
-    # requred as it crashes on openad install due to higher version causing problem with 3.10.7 rust code
+    pip install --no-cache-dir "jupyterlab_rise<0.40.0" && \
+    #&& \
     #pip install --no-cache-dir openad && \
-    pip install --no-cache-dir git+https://github.com/acceleratedscience/open-ad-toolkit.git && \
+    # requred as it crashes on openad install due to higher version causing problem with 3.10.7 rust code
+    pip install --no-cache-dir -U openad && \
+    pip install --no-cache-dir -U git+https://github.com/acceleratedscience/openad-plugin-ds.git && \ 
+    pip install --no-cache-dir -U git+https://github.com/acceleratedscience/openad-plugin-rxn.git && \ 
+    pip install --no-cache-dir ipykernel --upgrade && \
+    python3 -m   ipykernel install --user && \
     ipython profile create && \
     init_magic && \ 
     # setup path for runtime configuration \
@@ -138,8 +145,12 @@ RUN sed -i "s/RELEASE/2023c/" /opt/app-root/share/jupyter/metadata/runtime-image
 COPY --chown=1001:0 process_creds.py ./
 COPY --chown=1001:0 etc/ /opt/app-root/etc/jupyter/
 COPY --chown=1001:0 etc/  /opt/app-root/src/.jupyter/
+#COPY --chown=1001:0 abagbindings_demo.ipynb ./
+
+#COPY --chown=1001:0 abag_input.csv ./
+#RUN echo "start notebook"
 COPY --chown=1001:0 start-notebook.sh ./
-# Copy notebook launcher and utils
+
 
 WORKDIR /opt/app-root/src
 

@@ -68,7 +68,7 @@ fi
 ! [ -e "$HOME/abagbindings_demo.ipynb" ] && cp /opt/app-root/bin/abagbindings_demo.ipynb ./
 ! [ -e "$HOME/antigens.csv" ] && cp /opt/app-root/bin/abag_input.csv ./
 ! [ -e "$HOME/styles" ] && cp -r "$HOME/openad_notebooks/styles" ./
-! [ -e "$HOME/media" ] && cp -r "$HOME/openad_notebooks/media" ./
+#! [ -e "$HOME/media" ] && cp -r "$HOME/openad_notebooks/media" ./
 
 ! [ -d "/opt/app-root/src/.jupyter" ] && mkdir /opt/app-root/src/.jupyter
 cp  /opt/app-root/etc/jupyter/jupyter_lab_config.py /opt/app-root/src/.jupyter/
