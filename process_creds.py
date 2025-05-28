@@ -15,7 +15,7 @@ MODEL_DEFAULT_MASTER = {
     "smi-ted": "smi",
     "bi-aa-binding": "bi",
 }
-PROXY_URL = "https://open.accelerator.cafe/proxy"
+PROXY_URL = "https://open.accelerate.science/proxy"
 
 
 def extract_creds():
@@ -107,15 +107,23 @@ def place_models():
             host = PROXY_URL
         # Convert expiry time to a human-readable format
         expiry_datetime = time.strftime("%a %b %e, %G  at %R", time.localtime(expiry_time))
+
+        print("remove group")
+        for model in models:
+            if model in aliases.keys():
+                print(f"uncatalog service {aliases[model]}")
+                x = openad_app.request(f"uncatalog model service   {aliases[model]} ")
+                 
         x = openad_app.request("model auth remove group default ")
+        print("Add group")
         x = openad_app.request(f"model auth add group default with '{bearer}' ")
         for model in models:
             if model in aliases.keys():
-                x = openad_app.request(f"uncatalog model service   {aliases[model]} ")
+                print(f"catalog service  {aliases[model]}")
                 x = openad_app.request(
                     f"catalog model service from remote '{host}' as  {aliases[model]}  USING (Inference-Service={model}  auth_group=default )"
                 )
-                print("loading model :" + model)
+                print("loaded model :" + model)
         return
     elif os.path.exists("/run/secrets/openad_models"):
 
