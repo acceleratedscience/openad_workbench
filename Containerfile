@@ -97,9 +97,11 @@ RUN echo "Installing softwares and packages" && \
     #&& \
     #pip install --no-cache-dir openad && \
     # requred as it crashes on openad install due to higher version causing problem with 3.10.7 rust code
-    pip install --no-cache-dir -U openad && \
+    # pip install --no-cache-dir -U openad && \
+    pip install --no-cache-dir -U git+https://github.com/acceleratedscience/openad-toolkit.git@main && \
     pip install --no-cache-dir -U git+https://github.com/acceleratedscience/openad-plugin-ds.git && \ 
     pip install --no-cache-dir -U git+https://github.com/acceleratedscience/openad-plugin-rxn.git && \ 
+    pip install --no-cache-dir matplotlib seaborn faker && \
     pip install --no-cache-dir ipykernel --upgrade && \
     python3 -m   ipykernel install --user && \
     ipython profile create && \
